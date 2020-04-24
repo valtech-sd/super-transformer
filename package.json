@@ -1,6 +1,9 @@
 {
   "name": "universal-p658-log-transformation-library",
   "version": "1.0.0",
+  "scripts": {
+    "test": "node_modules/.bin/mocha ./tests/*.js"
+  },
   "dependencies": {
     "handlebars": "^4.7.6",
     "commander": "^5.0.0"
