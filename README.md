@@ -8,9 +8,9 @@ This repository is to maintain the code that transforms logs from a given input 
 
 The NPM packages are committed to the repo, but if you're having problems, try `npm i`.
 
-## transform.js
+## transformJSON.js
 
-The script **transform.js** is a transformation script. This script uses a handlebars/mustache template to 
+The script **transformJSON.js** is a transformation script. This script uses a handlebars/mustache template to 
 transform JSON passed as a string in the command line into another format determined by the template!
 
 To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
@@ -18,7 +18,7 @@ To learn more about handlebars/mustache template transformations, see the [Handl
 The transform script can be called like this:
 
 ```bash
-$  node ./transform.js -t 'demo-simple.json' -i '{"customer": {"name": "John"}}'
+$  node ./transformJSON.js -t 'demo-simple.json' -i '{"customer": {"name": "John"}}'
 ```
 
 The command line arguments are:
