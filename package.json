@@ -1,0 +1,13 @@
+{
+  "name": "universal-p658-log-transformation-library",
+  "version": "1.0.0",
+  "dependencies": {
+    "handlebars": "^4.7.6",
+    "commander": "^5.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "mocha": "^7.1.1",
+    "chai": "^4.2.0"
+  }
+}
