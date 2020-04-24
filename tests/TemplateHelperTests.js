@@ -9,7 +9,9 @@ chai.should();
 describe('TemplateHelper Tests', function () {
   describe('loadTemplate', function () {
     it('returns text if template exists', function () {
-      const templateBody = TemplateHelper.loadTemplate('demo-simple.json');
+      const templateBody = TemplateHelper.loadTemplate(
+        './template-examples/demo-simple.json'
+      );
       templateBody.should.exist;
     });
     it('returns empty string if template does not exist', function () {
@@ -28,7 +30,7 @@ describe('TemplateHelper Tests', function () {
         },
       };
       const templateOutput = TemplateHelper.applyTemplate(
-        'demo-simple.json',
+        './template-examples/demo-simple.json',
         contextData
       );
       // console.log(`templateOutput:\n${templateOutput}`);
