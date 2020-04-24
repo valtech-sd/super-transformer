@@ -1,3 +1,4 @@
+// Include our needed dependencies
 const TemplateHelper = require('./lib/TemplateHelper.js');
 const program = require('commander');
 const pkg = require('./package.json');
@@ -13,9 +14,16 @@ programSetup(program);
 // Transform
 console.log(TemplateHelper.applyTemplate(program.template, inputObject));
 
-// ********************************************************************************
+/**
+ * Helpers
+ */
 
-// Helper to define command line arguments and enforce them
+/**
+ * Parses out command line arguments and validates that all required arguments were passed.
+ * Exits if there's anything wrong with the command line arguments.
+ *
+ * @param program
+ */
 function programSetup(program) {
   // Setup our command line options, etc.
   program
@@ -48,7 +56,12 @@ function programSetup(program) {
   }
 }
 
-// Validates that a passed string can be parsed as JSON and return it as an object.
+/**
+ * Validates that a passed string can be parsed as JSON and return it as an object.
+ *
+ * @param inputjson
+ * @returns {null|any}
+ */
 function parseJson(inputjson) {
   try {
     return JSON.parse(inputjson);
