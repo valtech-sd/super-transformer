@@ -1,8 +1,8 @@
-# log-transformation-library
+# super-transformer
 
 ## Summary
 
-This repository is to maintain the code that transforms logs from a given input file and then outputs it to a new format ready for ingestion in a logging pipeline.
+This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.
 
 ## Dependencies
 
@@ -10,19 +10,18 @@ The NPM packages are committed to the repo, but if you're having problems, try `
 
 ## transformJSON.js
 
-The script **transformJSON.js** is a transformation script. This script uses a handlebars/mustache template to 
-transform JSON passed as a string in the command line into another format determined by the template!
+The script **transformJSON.js** is a transformation script. This script uses a handlebars/mustache template to transform JSON passed as a string in the command line into another format determined by the template!
 
 To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
 
 The transform script can be called like this:
 
 ```bash
-$  node ./transformJSON.js -t 'demo-simple.json' -i '{"customer": {"name": "John"}}'
+$  node ./transformJSON.js -t './template-examples/demo-simple.json' -i '{"customer": {"name": "John"}}'
 ```
 
 The command line arguments are:
-- -t :the name of the template file to use for the transformation. The template file must be present in the **templates** sub-directory.
+- -t :the full path of the template file to use for the transformation. 
 - -i :a valid json string which will be used as context data in the transformation. If the string you pass canot be parsed as JSON (using `JSON.parse()`), the script will terminate and return an error.
 
 ### Template Example: demo-simple.json
@@ -74,3 +73,11 @@ nested objects, etc.
 ## Running Tests
 
 From the root of this project, run `npm test` to execute all the tests in the **tests** sub-directory.
+
+## Publishing this Package to the GitHub NPM Registry
+
+In order to publish to GitHub NPM, you must first login with:
+```
+npm login --registry=https://npm.pkg.github.com --scope=@valtech-sd
+```
+You'll be prompted for your GitHub username and password for the Valtech-SD organization.

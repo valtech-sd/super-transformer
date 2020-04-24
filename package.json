@@ -1,6 +1,8 @@
 {
-  "name": "universal-p658-log-transformation-library",
+  "name": "super-transformer",
   "version": "1.0.0",
+  "description": "This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.",
+  "author": "Eric Soto <eric.soto@valtech.com>",
   "scripts": {
     "test": "node_modules/.bin/mocha ./tests/*.js"
   },
