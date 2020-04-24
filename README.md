@@ -79,5 +79,6 @@ From the root of this project, run `npm test` to execute all the tests in the **
 In order to publish to GitHub NPM, you must first login with:
 ```
 npm login --registry=https://npm.pkg.github.com --scope=@valtech-sd
+
 ```
 You'll be prompted for your GitHub username and password for the Valtech-SD organization.
