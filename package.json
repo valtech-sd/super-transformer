@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.",
   "author": "Eric Soto <eric.soto@valtech.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/valtech-sd/super-transformer.git"
-  },
   "bugs": {
     "url": "https://github.com/valtech-sd/super-transformer/issues"
   },
