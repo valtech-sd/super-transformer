@@ -1,1 +1,3 @@
-{ "customerName": "{{customer.name}}" }
+{
+  "customerName": "{{customer.name}}"
+}
