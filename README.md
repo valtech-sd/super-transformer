@@ -11,7 +11,7 @@ The NPM packages are committed to the repo, but if you're having problems, try `
 ## transform.js
 
 The script **transform.js** is a transformation script. This script uses a handlebars/mustache template to 
-transform JSON passed as a string in the command line string into another format determined by the template!
+transform JSON passed as a string in the command line into another format determined by the template!
 
 To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
 
@@ -51,12 +51,25 @@ You could also wrap it in double quotes if you escape the inner double quotes (t
 "{\"customer\": {\"name\": \"John\"}}"
 ```
 
+Regardless of how you pass the string with json data, the object above is represented as the following object once `JSON.parse()` parses it.
+
+```
+{
+  "customer": {
+    "name": "john"
+  }
+}
+```
+
 When you run this **demo-simple.json** template with the data above, the results are:
 ```
 { "customerName": "John" }
 ```
 
-What just happened? The template mustached variables were replaced with data coming from the passed JSON object.
+What just happened? The template mustached variables were replaced with data coming from the passed JSON object!
+
+Of course, this is a very simple example, but in practice the data object can be any JSON structure even containing arrays, 
+nested objects, etc.
 
 ## Running Tests
 
