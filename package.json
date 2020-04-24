@@ -7,9 +7,6 @@
     "url": "https://github.com/valtech-sd/super-transformer/issues"
   },
   "homepage": "https://github.com/valtech-sd/super-transformer",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "test": "node_modules/.bin/mocha ./tests/*.js"
   },
