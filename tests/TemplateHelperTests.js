@@ -31,7 +31,7 @@ describe('TemplateHelper Tests', function () {
         'demo-simple.json',
         contextData
       );
-      console.log(`templateOutput:\n${templateOutput}`);
+      // console.log(`templateOutput:\n${templateOutput}`);
       templateOutput.should.exist;
       templateOutput.should.not.match(
         /{{/,

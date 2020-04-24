@@ -57,3 +57,7 @@ When you run this **demo-simple.json** template with the data above, the results
 ```
 
 What just happened? The template mustached variables were replaced with data coming from the passed JSON object.
+
+## Running Tests
+
+From the root of this project, run `npm test` to execute all the tests in the **tests** sub-directory.
