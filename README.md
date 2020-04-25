@@ -4,6 +4,8 @@
 
 This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.
 
+A complete example of how to use this package in your own project is available at: https://github.com/valtech-sd/super-transformer-example
+
 ## Dependencies
 
 The NPM packages are committed to the repo, but if you're having problems, try `npm i`.
