@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Include our needed dependencies
 const TemplateHelper = require('./lib/TemplateHelper.js');
 const program = require('commander');
