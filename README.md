@@ -74,11 +74,11 @@ nested objects, etc.
 
 From the root of this project, run `npm test` to execute all the tests in the **tests** sub-directory.
 
-## Publishing this Package to the GitHub NPM Registry
+## Publishing this Package to the NPM Registry
 
-In order to publish to GitHub NPM, you must first login with:
+In order to publish to NPM, you must first login with:
 ```
-npm login --registry=https://npm.pkg.github.com --scope=@valtech-sd
+npm login
 
 ```
-You'll be prompted for your GitHub username and password for the Valtech-SD organization.
+You'll be prompted for username and password for npmjs.com. You should use the NPM user valtech-sd. 
