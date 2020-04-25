@@ -80,7 +80,17 @@ From the root of this project, run `npm test` to execute all the tests in the **
 
 In order to publish to NPM, you must first login with:
 ```
-npm login
-
+$ npm login
 ```
-You'll be prompted for username and password for npmjs.com. You should use the NPM user valtech-sd. 
+You'll be prompted for username and password for npmjs.com. You should use the NPM user valtech-sd.
+
+After login:
+```bash
+$ npm publish
+``` 
+
+If you only need to update this README.md file, you may instead do a patch on the current version:
+```bash
+$ npm version patch
+$ npm publish
+```
