@@ -1,0 +1,22 @@
+{
+  "name": "super-transformer",
+  "version": "1.0.0",
+  "description": "This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.",
+  "author": "Eric Soto <eric.soto@valtech.com>",
+  "bugs": {
+    "url": "https://github.com/valtech-sd/super-transformer/issues"
+  },
+  "homepage": "https://github.com/valtech-sd/super-transformer",
+  "scripts": {
+    "test": "node_modules/.bin/mocha ./tests/*.js"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.6",
+    "commander": "^5.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "mocha": "^7.1.1",
+    "chai": "^4.2.0"
+  }
+}
