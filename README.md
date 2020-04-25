@@ -4,6 +4,8 @@
 
 This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.
 
+A complete example of how to use this package in your own project is available at: https://github.com/valtech-sd/super-transformer-example
+
 ## Dependencies
 
 The NPM packages are committed to the repo, but if you're having problems, try `npm i`.
@@ -78,7 +80,12 @@ From the root of this project, run `npm test` to execute all the tests in the **
 
 In order to publish to NPM, you must first login with:
 ```
-npm login
-
+$ npm login
 ```
-You'll be prompted for username and password for npmjs.com. You should use the NPM user valtech-sd. 
+You'll be prompted for username and password for npmjs.com. You should use the NPM user valtech-sd.
+
+After login:
+```bash
+$ npm version patch
+$ npm publish
+```
