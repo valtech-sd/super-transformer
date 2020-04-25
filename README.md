@@ -86,11 +86,6 @@ You'll be prompted for username and password for npmjs.com. You should use the N
 
 After login:
 ```bash
-$ npm publish
-``` 
-
-If you only need to update this README.md file, you may instead do a patch on the current version:
-```bash
 $ npm version patch
 $ npm publish
 ```
