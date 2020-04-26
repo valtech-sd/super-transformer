@@ -1,5 +1,7 @@
 # super-transformer
 
+![NPM CI+Build+Test](https://github.com/valtech-sd/super-transformer/workflows/NPM%20CI+Build+Test/badge.svg?event=push)
+
 ## Summary
 
 This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.
