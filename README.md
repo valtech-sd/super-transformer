@@ -1,6 +1,6 @@
 # super-transformer
 
-![NPM CI+Build+Test](https://github.com/valtech-sd/super-transformer/workflows/NPM%20CI+Build+Test/badge.svg)
+![NPM CI+Build+Test](https://github.com/valtech-sd/super-transformer/workflows/NPM%20CI+Build+Test/badge.svg?event=push)
 
 ## Summary
 
