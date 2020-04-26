@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "handlebars": "^4.7.6",
-    "commander": "^5.0.0"
+    "commander": "^5.0.0",
+    "csv-parse": "^4.8.9"
   },
   "devDependencies": {
     "prettier": "^2.0.5",

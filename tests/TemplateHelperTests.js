@@ -30,7 +30,7 @@ describe('TemplateHelper Tests', function () {
         },
       };
       const templateOutput = TemplateHelper.applyTemplate(
-        './template-examples/demo-simple.json',
+        '{ "customerName": "{{customer.name}}" }',
         contextData
       );
       // console.log(`templateOutput:\n${templateOutput}`);
@@ -39,6 +39,7 @@ describe('TemplateHelper Tests', function () {
         /{{/,
         'Applied template should not have any mustaches {{}} left over!'
       );
+      expect(templateOutput).to.equal('{ "customerName": "John" }');
     });
   });
 });
