@@ -88,7 +88,8 @@ The command line arguments are:
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid delimited string which will be used as context data in the transformation. Note that column values that contain the delimiter must be quoted to avoid being parsed as another column.
 - -d :a character delimiter that is used in your input.
-- -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.)
+- -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
+- -n :a flag to tell the script to infer column names. Should not be used with the '-c' argument.
 
 ### Template Example: demo-simple-flat.json
 
@@ -109,7 +110,7 @@ in the above, **{{first_name}}** will be replaced with the **first_name** column
  
 If the incoming data does not have a value for the object, then the value is replaced with an empty string.
 
-The example column names in the above is:
+The example column names in the above are:
 ```
 "first_name, last_name, customer_city, hire_year"
 ```
@@ -118,7 +119,7 @@ This will represent to the parser that it should expect 3 columns and it will pa
 
 Once the columns are defined, we can pass in corresponding delimited data.
 
-The example data in the command line above is:
+The example data in the command line above are:
 ```
 "\"john\", \"smith\", \"Davenport, FL\", 2017"
 ```
