@@ -18,14 +18,22 @@ programSetup(program);
 
 // ASSERT: programSetup would exit if the CL arguments were bad. So, we have good arguments if we're here!
 // ASSERT: absoluteTemplatePath has a valid path and the template file exists.
+// ASSERT: either -c or -n was passed in, but not both.
 
 try {
   // Parse our input data into an inputObject
-  inputObject = XSVHelper.parseXsv(
-    program.inputdata,
-    program.delimiter,
-    program.columnLayout
-  );
+  if (program.columnLayout) {
+    inputObject = XSVHelper.parseXsv(
+      program.inputdata,
+      program.delimiter,
+      program.columnLayout
+    );
+  } else if (program.inferColumns) {
+    inputObject = XSVHelper.parseXsvAndInferColumns(
+      program.inputdata,
+      program.delimiter
+    );
+  }
 
   // ASSERT: our parseXsv returns an array, but we expect a single item!
   assert(
@@ -62,31 +70,30 @@ function programSetup(program) {
     .description(
       `Transforms an incoming delimited string by applying a handlebars/mustache template that is passed by file path as an argument.`
     )
-    .option(
+    .requiredOption(
       '-t, --template </path/to/your/template.extension>',
       'The full path to the template file to be used.'
     )
-    .option(
+    .requiredOption(
       '-i, --inputdata <"john", "smith", 1969, "Davenport, FL">',
       'Pass in a string delimited by the passed in --delimiter. Column values that contain the delimiter should be quoted.'
     )
-    .option(
+    .requiredOption(
       '-d, --delimiter <"," or "|" or "\\t" or other>',
       'Pass in a character that delimits the individual columns in your input string.'
     )
     .option(
       '-c, --columnLayout <"column_name, other_column_name">',
-      'Pass in a string of comma separated column names. These will be the names you use in your template file.'
+      'Pass in a string of comma separated column names. These will be the names you use in your template file. not allowed with the "-n" argument.'
+    )
+    .option(
+      '-n, --inferColumns',
+      'A flag to tell the script to infer the column names from the incoming data. Not allowed with the "-c" argument.'
     )
     .parse(process.argv);
 
   // Ensure we received mandatory parameters.
-  if (
-    !program.template ||
-    !program.inputdata ||
-    !program.columnLayout ||
-    !program.delimiter
-  ) {
+  if (!program.template || !program.inputdata || !program.delimiter) {
     program.outputHelp();
     process.exit(-1);
   }
@@ -109,5 +116,21 @@ function programSetup(program) {
       `\n>>> ERROR: the template file "${absoluteTemplatePath}" was not found!`
     );
     process.exit(-4);
+  }
+
+  if (!program.columnLayout && !program.inferColumns) {
+    program.outputHelp();
+    console.log(
+      `\n>>> ERROR: Either "-n" (--inferColumns) or "-c" (--columnLayout) is required.`
+    );
+    process.exit(-5);
+  }
+
+  if (program.columnLayout && program.inferColumns) {
+    program.outputHelp();
+    console.log(
+      `\n>>> ERROR: the "-n" (--inferColumns) and "-c" (--columnLayout) arguments are not allowed together! Use one or the other.`
+    );
+    process.exit(-6);
   }
 }
