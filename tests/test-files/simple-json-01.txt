@@ -1,0 +1,3 @@
+{"customer": {"name": "John"}}
+{"customer": {"name": "Mary"}}
+{"customer": {"name": "Pete"}}

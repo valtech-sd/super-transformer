@@ -1,0 +1,4 @@
+first_name, last_name, customer_city, hire_year
+"john", "smith", "Davenport, FL", 2017
+"mary", "jones", "Orlando, FL", 2019
+"pete", "parker", "Lakeland, FL", 2018

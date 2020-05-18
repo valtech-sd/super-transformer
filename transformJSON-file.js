@@ -2,7 +2,8 @@
 
 // Include our needed dependencies
 const TemplateHelper = require('./lib/TemplateHelper.js');
-const JSONHelper = require('./lib/JSONHelper.js');
+const { DataFormat } = require('./lib/TemplateHelperEnums.js');
+
 const program = require('commander');
 const pkg = require('./package.json');
 const fs = require('fs');
@@ -10,7 +11,7 @@ const path = require('path');
 
 // Set aside a variable to hold our inputObject once we parse it from JSON
 // These will be set by our programSetup
-let inputObject, absoluteTemplatePath;
+let inputObject, absoluteTemplatePath, absoluteInputFilePath, fileHandle;
 
 // Parse out command line arguments
 programSetup(program);
@@ -18,11 +19,14 @@ programSetup(program);
 // ASSERT: programSetup would exit if the CL arguments were bad. So, we have good arguments if we're here!
 // ASSERT: inputObject has a valid object (derived from the input JSON string.)
 // ASSERT: absoluteTemplatePath has a valid path and the template file exists.
+// ASSERT: absoluteInputFilePath has a valid path and the data file exists.
 
-// Transform
-console.log(
-  TemplateHelper.applyTemplateWithFilePath(absoluteTemplatePath, inputObject)
-);
+// Let'd do it!
+TemplateHelper.applyTemplateWithFilePathToDataFile(
+  absoluteTemplatePath,
+  absoluteInputFilePath,
+  DataFormat.JSON
+).catch();
 
 /**
  * Helpers
@@ -39,30 +43,22 @@ function programSetup(program) {
   program
     .version(pkg.version)
     .description(
-      `Transforms an incoming json string by applying a handlebars/mustache template that is passed by file path as an argument.`
+      `Transforms an incoming json file by applying a handlebars/mustache template that is passed by file path as an argument. Outputs to console for each redirection.`
     )
     .requiredOption(
       '-t, --template </path/to/your/template.extension>',
       'The full path to the template file to be used.'
     )
     .requiredOption(
-      '-i, --inputdata <"json string">',
-      'Pass in a stringified valid JSON object.'
+      '-i, --inputfilepath </path/to/input/file>',
+      'The path of the data file to read in and apply transformations to. This file MUST BE a multi-line JSON file where each row contains an entire JSON object. This file must NOT contain a JSON array of objects.'
     )
     .parse(process.argv);
 
   // Ensure we received mandatory parameters.
-  if (!program.template || !program.inputdata) {
+  if (!program.template || !program.inputfilepath) {
     program.outputHelp();
     process.exit(-1);
-  }
-
-  // Parse out the JSON
-  inputObject = JSONHelper.parseJson(program.inputdata);
-  if (!inputObject) {
-    program.outputHelp();
-    console.log(`\n>>> ERROR: the parameter "inputjson" was not valid JSON!`);
-    process.exit(-2);
   }
 
   try {
@@ -73,7 +69,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: Could not parse the path of your template from the supplied value of "${program.template}".`
     );
-    process.exit(-3);
+    process.exit(-10);
   }
 
   // Ensure the template exists
@@ -82,6 +78,26 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: the template file "${absoluteTemplatePath}" was not found!`
     );
-    process.exit(-4);
+    process.exit(-11);
+  }
+
+  try {
+    // Make the input file absolute
+    absoluteInputFilePath = path.normalize(program.inputfilepath);
+  } catch (e) {
+    program.outputHelp();
+    console.log(
+      `\n>>> ERROR: Could not parse the path of your data file from the supplied value of "${program.inputfilepath}".`
+    );
+    process.exit(-20);
+  }
+
+  // Ensure the input exists
+  if (!fs.existsSync(absoluteInputFilePath)) {
+    program.outputHelp();
+    console.log(
+      `\n>>> ERROR: the data file "${absoluteInputFilePath}" was not found!`
+    );
+    process.exit(-21);
   }
 }

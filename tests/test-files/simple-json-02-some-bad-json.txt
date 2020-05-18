@@ -1,0 +1,4 @@
+{"customer": {"name": "John"}}
+bad json row
+{shouldSkip: "some
+{"customer": {"name": "Pete"}}

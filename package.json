@@ -1,7 +1,7 @@
 {
   "name": "super-transformer",
-  "version": "1.2.0",
-  "description": "This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.",
+  "version": "2.0.1",
+  "description": "This package provides scripts to transform incoming strings and files using templates. It receives a file path or a string in various formats (JSON, CSV) and returns transformed data.",
   "author": "Eric Soto <eric.soto@valtech.com>",
   "main": "index.js",
   "license": "MIT",
