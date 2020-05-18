@@ -21,14 +21,14 @@ To learn more about handlebars/mustache template transformations, see the [Handl
 The transform script can be called like this:
 
 ```bash
-$  node ./transformJSON.js -t "./template-examples/demo-simple.json" -i "{\"customer\": {\"name\": \"John\"}}"
+$  node ./transformJSON.js -t "./template-examples/demo-simple.hbs" -i "{\"customer\": {\"name\": \"John\"}}"
 ```
 
 The command line arguments are:
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid json string which will be used as context data in the transformation. If the string you pass cannot be parsed as JSON (using `JSON.parse()`), the script will terminate and return an error.
 
-### Template Example: demo-simple.json
+### Template Example: demo-simple.hbs
 
 Handlebars supports many rich template substitutions. To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
 
@@ -62,7 +62,7 @@ Regardless of how you pass the string with json data, the object above is repres
 }
 ```
 
-When you run this **demo-simple.json** template with the data above, the results are:
+When you run this **demo-simple.hbs** template with the data above, the results are:
 ```
 { "customerName": "John" }
 ```
@@ -81,7 +81,7 @@ To learn more about handlebars/mustache template transformations, see the [Handl
 The transform script can be called like this:
 
 ```bash
-$  node ./transformDelimited.js -t "./template-examples/demo-simple-flat.json" -i '"john", "smith", "Davenport, FL", 2017' -d "," -c "first_name, last_name, customer_city, hire_year"
+$  node ./transformDelimited.js -t "./template-examples/demo-simple-flat.hbs" -i '"john", "smith", "Davenport, FL", 2017' -d "," -c "first_name, last_name, customer_city, hire_year"
 ```
 
 The command line arguments are:
@@ -91,7 +91,7 @@ The command line arguments are:
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names. Should not be used with the '-c' argument.
 
-### Template Example: demo-simple-flat.json
+### Template Example: demo-simple-flat.hbs
 
 Handlebars supports many rich template substitutions. To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
 
@@ -142,7 +142,7 @@ Regardless of how you pass the string, the object above is represented as the fo
 }
 ```
 
-When you run this **demo-simple.json** template with the data above, the results are:
+When you run this **demo-simple.hbs** template with the data above, the results are:
 ```
 {  "customerName": "john smith",  "customerCity": "Davenport, FL",  "fteSince": 2017 }
 ```
