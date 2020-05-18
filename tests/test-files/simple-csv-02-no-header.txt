@@ -1,0 +1,3 @@
+"john", "smith", "Davenport, FL", 2017
+"mary", "jones", "Orlando, FL", 2019
+"pete", "parker", "Lakeland, FL", 2018
