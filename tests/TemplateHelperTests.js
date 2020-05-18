@@ -4,6 +4,8 @@ const mocha = require('mocha');
 const describe = mocha.describe;
 const it = mocha.it;
 const chai = require('chai');
+const simple = require('simple-mock');
+const handlebars = require('handlebars');
 const expect = chai.expect;
 chai.should();
 
@@ -122,6 +124,61 @@ describe('TemplateHelper Tests', function () {
         .catch((e) => {
           done(e);
         });
+    });
+
+    /**
+     * Test that the template is cached and not recompiled
+     * Do this by...
+     * 1.  Create a an example object
+     * 2.  Load a template body from file
+     * 3.  Mock handlebars compile function
+     * 4.  Reset cached templates
+     * 5.  Apply template using template body and data
+     * 6.  Make sure template was cached.
+     * 7.  Make sure compile was called
+     * 8.  Make sure return data is correct
+     * 9.  Apply template again using same template and data
+     * 10.  Test compile was not called again
+     * 11. Test data is correct
+     */
+    it('JSON: applyTemplate will cache the template', (done) => {
+      // 1.  Create a an example object
+      const contextData = {
+        customer: {
+          name: 'John',
+        },
+      };
+
+      // 2.  Load a template body from file
+      const templateBody = TemplateHelper.loadTemplate(
+        './template-examples/demo-simple.hbs'
+      );
+      // 3.  Reset cached templates
+      TemplateHelper.cacheCompiledTemplates = {};
+
+      // 3.  Mock handlebars compile function
+      let spy = simple.mock(handlebars, 'compile');
+
+      // 5.  Apply template using template body and data
+      let templateOutput = TemplateHelper.applyTemplate(
+        templateBody,
+        contextData
+      );
+
+      // 6.  Make sure template was cached.
+      expect(TemplateHelper.cacheCompiledTemplates).to.have.key(templateBody);
+
+      // 7.  Make sure compile was called
+      expect(spy.callCount).to.equal(1);
+      // 8.  Make sure return data is correct
+      expect(templateOutput).to.equal('{ "customerName": "John" }');
+      // 9.  Apply template again using same template and data
+      templateOutput = TemplateHelper.applyTemplate(templateBody, contextData);
+      // 10.  Test compile was not called again
+      expect(spy.callCount).to.equal(1);
+      // 11. Test data is correct
+      expect(templateOutput).to.equal('{ "customerName": "John" }');
+      done();
     });
     it('XSV: should transform a template with data from a file', (done) => {
       // In this test, we DO have columns in the file, so we inferColumns
