@@ -1,6 +1,6 @@
 {
   "name": "super-transformer",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "This package provides scripts to transform incoming strings and files using templates. It receives a file path or a string in various formats (JSON, CSV) and returns transformed data.",
   "author": "Eric Soto <eric.soto@valtech.com>",
   "main": "index.js",
@@ -18,8 +18,9 @@
     "csv-parse": "^4.8.9"
   },
   "devDependencies": {
-    "prettier": "^2.0.5",
+    "chai": "^4.2.0",
     "mocha": "^7.1.1",
-    "chai": "^4.2.0"
+    "prettier": "^2.0.5",
+    "simple-mock": "^0.8.0"
   }
 }
