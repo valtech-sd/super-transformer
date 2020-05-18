@@ -4,7 +4,7 @@
 
 ## Summary
 
-This package provides scripts to transform incoming strings using templates. It receives string representations of various formats (JSON, CSV) and returns a string after transforming the incoming data.
+This package provides scripts to transform incoming strings using templates. It receives string of various formats (JSON, CSV) and returns a string after transforming the incoming data. This package can also transform entire files or a string passed as an argument.
 
 A complete example of how to use this package in your own project is available at: https://github.com/valtech-sd/super-transformer-example
 
@@ -12,11 +12,13 @@ A complete example of how to use this package in your own project is available a
 
 The NPM packages are committed to the repo, but if you're having problems, try `npm i`.
 
-## transformJSON.js
+This repository uses Handlebars templates. To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
 
-The script **transformJSON.js** is a transformation script. This script uses a handlebars/mustache template to transform JSON passed as a string in the command line into another format determined by the template!
+## JSON Transformations
 
-To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
+### transformJSON.js
+
+The script **transformJSON.js** is a transformation script that operates on a single data object (a single "row" of data). This script uses a handlebars/mustache template to transform JSON passed as a string in the command line into another format determined by the template!
 
 The transform script can be called like this:
 
@@ -25,12 +27,35 @@ $  node ./transformJSON.js -t "./template-examples/demo-simple.hbs" -i "{\"custo
 ```
 
 The command line arguments are:
+
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid json string which will be used as context data in the transformation. If the string you pass cannot be parsed as JSON (using `JSON.parse()`), the script will terminate and return an error.
 
+### transformJSON-file.js
+
+The script **transformJSON-file.js** is a transformation script that operates on an input file of any size (instead of a single data object). This script uses a handlebars/mustache template to transform each row of JSON into another format determined by the template!
+
+The transform script can be called like this:
+
+```bash
+$  node ./transformJSON-file.js -t "./template-examples/demo-simple.hbs" -i "./tests/test-files/simple-json-01.txt"
+```
+
+The command line arguments are:
+
+- -t :the full path of the template file to use for the transformation. 
+- -i :the full path to a data file containing individual JSON objects, one per row. Note, a single JSON object (an array of JSON objects) is not supported.
+
+This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
+```bash
+$  node ./transformJSON-file.js -t "./template-examples/demo-simple.hbs"  -i "./tests/test-files/simple-json-01.txt" > /path/to/an/output/file.json
+```
+
+What about lines in the file that can't be parsed as JSON? This script will skip those lines and output error messages via STDERR so that a redirected output file still contains the successful rows without any errors.
+
 ### Template Example: demo-simple.hbs
 
-Handlebars supports many rich template substitutions. To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
+Handlebars supports many rich template substitutions. 
 
 The example template is very simple:
 
@@ -72,11 +97,23 @@ What just happened? The template mustached variables were replaced with data com
 Of course, this is a very simple example, but in practice the data object can be any JSON structure even containing arrays, 
 nested objects, etc.
 
-## transformDelimited.js
+### Data File Example: simple-json-01.txt
 
-The script **transformDelimited.js** is a transformation script. This script uses a handlebars/mustache template to transform a delimited string (CSV or otherwise) passed as a string in the command line into another format determined by the template!
+The example data file contains one JSON object per row as follows:
 
-To learn more about handlebars/mustache template transformations, see the [HandlebarsJS website](https://handlebarsjs.com/guide/).
+```text
+{"customer": {"name": "John"}}
+{"customer": {"name": "Mary"}}
+{"customer": {"name": "Pete"}}
+```
+
+Note that this is NOT a well formed JSON file in that it is not an array of JSON objects strung together. This format, very common in logging scenarios, holds a single complete JSON object per row!
+
+## Delimited Transformations (CSV, TSV, or any other delimited string)
+
+### transformDelimited.js
+
+The script **transformDelimited.js** is a transformation script that operates on a single data object (a single "row" of data). This script uses a handlebars/mustache template to transform a delimited string (CSV or otherwise) passed as a string in the command line into another format determined by the template!
 
 The transform script can be called like this:
 
@@ -85,11 +122,37 @@ $  node ./transformDelimited.js -t "./template-examples/demo-simple-flat.hbs" -i
 ```
 
 The command line arguments are:
+
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid delimited string which will be used as context data in the transformation. Note that column values that contain the delimiter must be quoted to avoid being parsed as another column.
 - -d :a character delimiter that is used in your input.
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names. Should not be used with the '-c' argument.
+
+### transformDelimited-file.js
+
+The script **transformDelimited.js** is a transformation script that operates on an input file of any size (instead of a single data object). This script uses a handlebars/mustache template to transform each delimited record row (CSV or otherwise) into another format determined by the template!
+
+The transform script can be called like this:
+
+```bash
+$  node ./transformDelimited-file.js -t "./template-examples/demo-simple-flat.hbs" -i "./tests/test-files/simple-csv-01.txt" -d "," -n
+```
+
+The command line arguments are:
+
+- -t :the full path of the template file to use for the transformation. 
+- -i :the full path to a data file containing individual delimited records, one per row.
+- -d :a character delimiter that is used in your input.
+- -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
+- -n :a flag to tell the script to infer column names from the first row of your file. Should not be used with the '-c' argument.
+
+This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
+```bash
+$  node ./transformDelimited-file.js -t "./template-examples/demo-simple-flat.hbs" -i "./tests/test-files/simple-csv-01.txt" -d "," -n > /path/to/an/output/file.json
+```
+
+What about lines in the file that can't be parsed as JSON? This script will skip those lines and output error messages via STDERR so that a redirected output file still contains the successful rows without any errors.
 
 ### Template Example: demo-simple-flat.hbs
 
@@ -151,6 +214,27 @@ What just happened? The template mustached variables were replaced with data com
 
 Of course, this is a very simple example, but in practice the input data can be any delimited string with as many columns as necessary so long as a matching columnLayout is also passed.
 
+### Data File Example: simple-csv-01.txt
+
+The example data file contains a header row with column names plus delinited (CSV) record rows as follows:
+
+```text
+first_name, last_name, customer_city, hire_year
+"john", "smith", "Davenport, FL", 2017
+"mary", "jones", "Orlando, FL", 2019
+"pete", "parker", "Lakeland, FL", 2018
+```
+
+You would transform with the above file that contains a column header row using the **-n** command line argument to let the script infer your column names.
+
+It is also possible to use a file without headers, for example:
+```text
+"john", "smith", "Davenport, FL", 2017
+"mary", "jones", "Orlando, FL", 2019
+"pete", "parker", "Lakeland, FL", 2018
+```
+
+You would transform with the above file that does not have a column header row using the **-c "first_name, last_name, customer_city, hire_year"** command line argument.
 
 ## Running Tests
 
@@ -172,5 +256,5 @@ $ npm publish
 
 ## Roadmap
 
-* Add GROK support and a transformGROK.js script. There is a GROK Node library that uses the same underlying Regex library as logstash. See the PR for a recent version update (we might fork.) 
+* (maybe) Add GROK support and a transformGROK.js script. There is a GROK Node library that uses the same underlying Regex library as logstash. See the PR for a recent version update (we might fork.) 
   * Why GROK? It's a nice way to apply many regular expressions to a single string to break it out into a rich object. There are also over 200 existing GROK patterns for mostly log patterns.
