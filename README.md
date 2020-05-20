@@ -279,7 +279,20 @@ Considerations:
   {
     "rvs": {
       "rv18": {
-        "RvVgs": {}
+        "RvVgs": {"stops":  7}
+      }
+    }
+  }
+  ```
+  
+  Results in the following JSON before the rest of the package acts on your data: (pretty printed for illustration only. the return will be exactly as you passed, but with replacements.)
+  
+  ```json
+  {
+    "rvs": {
+      "rv": 18,
+      "rvdata": {
+        "RvVgs": {"stops":  7}
       }
     }
   }
