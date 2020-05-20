@@ -84,6 +84,8 @@ describe('TemplateHelper Tests', function () {
         null,
         null,
         null,
+        null,
+        null,
         OutputTo.METHOD_RETURN
       )
         .then((templateOutput) => {
@@ -92,6 +94,35 @@ describe('TemplateHelper Tests', function () {
             '{ "customerName": "John" }\n' +
               '{ "customerName": "Mary" }\n' +
               '{ "customerName": "Pete" }\n'
+          );
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
+    });
+    it('JSON: should transform a template with a Regexp replacement on data from a file', (done) => {
+      const templatePath = './template-examples/demo-for-regex.hbs';
+      const dataFilePath = './tests/test-files/simple-json-03-must-regex.txt';
+      // Apply our template and file.
+      // Note we override outputTo so we can get the result of the transformation instead of letting it go to stdout.
+      TemplateHelper.applyTemplateWithFilePathToDataFile(
+        templatePath,
+        dataFilePath,
+        DataFormat.JSON,
+        '"rv(\\d\\d)".*?:',
+        '"rv":$1,"rvdata":',
+        null,
+        null,
+        null,
+        OutputTo.METHOD_RETURN
+      )
+        .then((templateOutput) => {
+          templateOutput.should.exist;
+          expect(templateOutput).to.equal(
+            '{ "rv": 18, "rvdata": 7 }\n' +
+              '{ "rv": 17, "rvdata": 3 }\n' +
+              '{ "rv": 15, "rvdata": 17 }\n'
           );
           done();
         })
@@ -109,6 +140,8 @@ describe('TemplateHelper Tests', function () {
         templatePath,
         dataFilePath,
         DataFormat.JSON,
+        null,
+        null,
         null,
         null,
         null,
@@ -193,6 +226,8 @@ describe('TemplateHelper Tests', function () {
         templatePath,
         dataFilePath,
         DataFormat.XSV,
+        null,
+        null,
         delimiter,
         columnLayout,
         inferColumns,
@@ -225,6 +260,8 @@ describe('TemplateHelper Tests', function () {
         templatePath,
         dataFilePath,
         DataFormat.XSV,
+        null,
+        null,
         delimiter,
         columnLayout,
         inferColumns,
@@ -256,6 +293,8 @@ describe('TemplateHelper Tests', function () {
         templatePath,
         dataFilePath,
         DataFormat.XSV,
+        null,
+        null,
         delimiter,
         columnLayout,
         inferColumns,

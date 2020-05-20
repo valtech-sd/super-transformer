@@ -30,6 +30,8 @@ The command line arguments are:
 
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid json string which will be used as context data in the transformation. If the string you pass cannot be parsed as JSON (using `JSON.parse()`), the script will terminate and return an error.
+- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
 
 ### transformJSON-file.js
 
@@ -45,6 +47,9 @@ The command line arguments are:
 
 - -t :the full path of the template file to use for the transformation. 
 - -i :the full path to a data file containing individual JSON objects, one per row. Note, a single JSON object (an array of JSON objects) is not supported.
+- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
+
 
 This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
 ```bash
@@ -128,6 +133,9 @@ The command line arguments are:
 - -d :a character delimiter that is used in your input.
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names. Should not be used with the '-c' argument.
+- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
+
 
 ### transformDelimited-file.js
 
@@ -146,6 +154,8 @@ The command line arguments are:
 - -d :a character delimiter that is used in your input.
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names from the first row of your file. Should not be used with the '-c' argument.
+- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
 
 This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
 ```bash
@@ -236,6 +246,87 @@ It is also possible to use a file without headers, for example:
 
 You would transform with the above file that does not have a column header row using the **-c "first_name, last_name, customer_city, hire_year"** command line argument.
 
+## Regex Replacement Examples
+
+Both the transformDelimited and transformJSON variants of this package support passing in a Regex replacement. This package supports standard JavaScript Regex patterns and replacements.
+
+Regex replacements can be as simple or as complex as needed!
+
+Considerations:
+- The Regex replacement happens BEFORE JSON/COLUMN parsing.
+- If you are doing a JSON transform, ensure your Regex replacement results in VALID JSON.
+- If you are doing an XSV transform, ensure your Regex replacement results in the proper number of columns and string quotes.
+
+**Example 1 - Simple**
+- Passing: -m 'John' -r 'Johnnn'
+  When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
+  
+  ```json
+  {"customer": {"name": "John"}}
+  ```
+  
+  Results in the following JSON before the rest of the package acts on your data: (pretty printed for illustration only. the return will be exactly as you passed, but with replacements.)
+  
+  ```json
+  {"customer": {"name": "Johnnn"}}
+  ```
+
+**Example 2 - Complex**
+- Passing: -m '"rv(\d\d)".*?:' -r '"rv":$1,"rvdata":'
+  When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
+  
+  ```json
+  {
+    "rvs": {
+      "rv18": {
+        "RvVgs": {"stops":  7}
+      }
+    }
+  }
+  ```
+  
+  Results in the following JSON before the rest of the package acts on your data: (pretty printed for illustration only. the return will be exactly as you passed, but with replacements.)
+  
+  ```json
+  {
+    "rvs": {
+      "rv": 18,
+      "rvdata": {
+        "RvVgs": {"stops":  7}
+      }
+    }
+  }
+  ```
+  
+**Example 3 - Simple**
+- Passing: -m 'John' -r 'Johnnn'
+  When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
+  
+  ```csv
+  "john", "smith", "Davenport, FL", 2017
+  ```
+  
+  Results in the following JSON before the rest of the package acts on your data: (pretty printed for illustration only. the return will be exactly as you passed, but with replacements.)
+  
+  ```csv
+  "Johnnn", "smith", "Davenport, FL", 2017
+  ```
+
+**Example 4 - Complex**
+- Passing: -m '^(.*?),(.*?),(.*?),(.*?)$' -r '$1,$2,$3,$4,"full time"' 
+  When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
+  
+  ```csv
+  "john", "smith", "Davenport, FL", 2017
+  ```
+  
+  Results in the following JSON before the rest of the package acts on your data: (pretty printed for illustration only. the return will be exactly as you passed, but with replacements.)
+  
+  ```csv
+    "john", "smith", "Davenport, FL", 2017, "full time"
+  ```
+  (Essentially, you add one more column to every row! Note that in this case, you would need to pass -c to define the columns properly otherwise, you'll get a column mismatch error.)
+
 ## Running Tests
 
 From the root of this project, run `npm test` to execute all the tests in the **tests** sub-directory.
@@ -256,5 +347,6 @@ $ npm publish
 
 ## Roadmap
 
-* (maybe) Add GROK support and a transformGROK.js script. There is a GROK Node library that uses the same underlying Regex library as logstash. See the PR for a recent version update (we might fork.) 
+* Add -s --skipLines for the **\*-file.js** scripts to allow the scripts to skip one or more lines in input files.
+* (maybe,low) Add GROK support and a transformGROK.js script. There is a GROK Node library that uses the same underlying Regex library as logstash. See the PR for a recent version update (we might fork.) 
   * Why GROK? It's a nice way to apply many regular expressions to a single string to break it out into a rich object. There are also over 200 existing GROK patterns for mostly log patterns.
