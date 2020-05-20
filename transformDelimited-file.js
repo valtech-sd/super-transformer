@@ -27,6 +27,8 @@ TemplateHelper.applyTemplateWithFilePathToDataFile(
   absoluteTemplatePath,
   absoluteInputFilePath,
   DataFormat.XSV,
+  program.matchregex,
+  program.replacepattern,
   program.delimiter,
   program.columnLayout,
   program.inferColumns
@@ -69,12 +71,27 @@ function programSetup(program) {
       '-n, --inferColumns',
       'A flag to tell the script to infer the column names from the incoming data. Not allowed with the "-c" argument.'
     )
+    .option(
+      "-m, --matchregex <'a regex match'>",
+      "Optionally pass a regex match as a string. Do not include the typical forward slashes used in javascript regex patterns (pass in 'regex pattern' instead of /regex-here/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string."
+    )
+    .option(
+      "-r, --replacepattern <'a replacement pattern'>",
+      "If you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m."
+    )
     .parse(process.argv);
 
   // Ensure we received mandatory parameters.
   if (!program.template || !program.inputfilepath || !program.delimiter) {
     program.outputHelp();
-    process.exit(-1);
+    process.exit(-10);
+  }
+
+  // Ensure that if we were passed -m, we also have -r
+  if (program.matchregex && !program.replacepattern) {
+    program.outputHelp();
+    console.error(`\n>>> ERROR: If you pass -m, you also must pass -r.`);
+    process.exit(-11);
   }
 
   try {
@@ -85,7 +102,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: Could not parse the path of your template from the supplied value of "${program.template}".`
     );
-    process.exit(-10);
+    process.exit(-20);
   }
 
   // Ensure the template exists
@@ -94,7 +111,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: the template file "${absoluteTemplatePath}" was not found!`
     );
-    process.exit(-11);
+    process.exit(-21);
   }
 
   try {
@@ -105,7 +122,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: Could not parse the path of your data file from the supplied value of "${program.inputfilepath}".`
     );
-    process.exit(-20);
+    process.exit(-30);
   }
 
   // Ensure the input exists
@@ -114,7 +131,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: the data file "${absoluteInputFilePath}" was not found!`
     );
-    process.exit(-21);
+    process.exit(-31);
   }
 
   if (!program.columnLayout && !program.inferColumns) {
@@ -122,7 +139,7 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: Either "-n" (--inferColumns) or "-c" (--columnLayout) is required.`
     );
-    process.exit(-5);
+    process.exit(-40);
   }
 
   if (program.columnLayout && program.inferColumns) {
@@ -130,6 +147,6 @@ function programSetup(program) {
     console.log(
       `\n>>> ERROR: the "-n" (--inferColumns) and "-c" (--columnLayout) arguments are not allowed together! Use one or the other.`
     );
-    process.exit(-6);
+    process.exit(-41);
   }
 }
