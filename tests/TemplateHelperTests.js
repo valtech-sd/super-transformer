@@ -8,6 +8,7 @@ const simple = require('simple-mock');
 const handlebars = require('handlebars');
 const expect = chai.expect;
 chai.should();
+const path = require('path');
 
 describe('TemplateHelper Tests', function () {
   describe('applyTemplateWithFilePath', () => {
@@ -312,6 +313,24 @@ describe('TemplateHelper Tests', function () {
         .catch((e) => {
           done(e);
         });
+    });
+  });
+  describe('loadHandlebarsHelpers', () => {
+    it('Valid handlebars custom helper file loads and applies the "yell" helper', () => {
+      TemplateHelper.loadHandlebarsHelpers(
+        path.resolve('./template-examples/demo-handlebars-helpers.js')
+      );
+      const contextData = {
+        customer: {
+          name: 'John',
+        },
+      };
+      const templateOutput = TemplateHelper.applyTemplate(
+        '{ "customerName": "{{yell customer.name}}" }',
+        contextData
+      );
+      templateOutput.should.exist;
+      expect(templateOutput).to.equal('{ "customerName": "JOHN" }');
     });
   });
 });
