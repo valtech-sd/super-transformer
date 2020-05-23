@@ -12,7 +12,10 @@ const assert = require('assert');
 
 // Set aside a variable to hold our inputObject once we parse it from JSON
 // These will be set by our programSetup
-let inputObject, absoluteTemplatePath, inputDataLocal;
+let inputObject,
+  absoluteTemplatePath,
+  inputDataLocal,
+  absoluteHandlebarsHelperPath;
 
 // Parse out command line arguments
 programSetup(program);
@@ -100,6 +103,10 @@ function programSetup(program) {
       "-r, --replacepattern <'a replacement pattern'>",
       "If you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m."
     )
+    .option(
+      "-x --extendHandlebars </path/to/your/handlebars-extension.js>'",
+      'If you provide a path to a javascript file'
+    )
     .parse(process.argv);
 
   // Ensure we received mandatory parameters.
@@ -138,7 +145,7 @@ function programSetup(program) {
 
   try {
     // Make the template file absolute
-    absoluteTemplatePath = path.normalize(program.template);
+    absoluteTemplatePath = path.resolve(program.template);
   } catch (e) {
     program.outputHelp();
     console.log(
@@ -170,5 +177,39 @@ function programSetup(program) {
       `\n>>> ERROR: the "-n" (--inferColumns) and "-c" (--columnLayout) arguments are not allowed together! Use one or the other.`
     );
     process.exit(-50);
+  }
+
+  // Sanity for the Handlebars helper file, if passed
+  if (program.extendHandlebars) {
+    try {
+      // Make the path absolute
+      absoluteHandlebarsHelperPath = path.resolve(program.extendHandlebars);
+    } catch (e) {
+      program.outputHelp();
+      console.error(
+        `\n>>> ERROR: Could not parse the path of your handlebars helper javascript file from the supplied value of "${program.extendHandlebars}".`
+      );
+      process.exit(-40);
+    }
+
+    // Ensure the file exists
+    if (!fs.existsSync(absoluteHandlebarsHelperPath)) {
+      program.outputHelp();
+      console.error(
+        `\n>>> ERROR: the Handlebars helper javascript file "${absoluteHandlebarsHelperPath}" was not found!`
+      );
+      process.exit(-41);
+    }
+
+    // ASSERT: We have an absolute path & File exists, so we load it
+    try {
+      TemplateHelper.loadHandlebarsHelpers(absoluteHandlebarsHelperPath);
+    } catch (e) {
+      console.error(
+        `\n>>> ERROR: Could register the helpers in your handlebars helper javascript file from the supplied value of "${absoluteHandlebarsHelperPath}".`
+      );
+      console.error(`>>> INNER ERROR: ${e.message}`);
+      process.exit(-40);
+    }
   }
 }
