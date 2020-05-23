@@ -30,8 +30,9 @@ The command line arguments are:
 
 - -t :the full path of the template file to use for the transformation. 
 - -i :a valid json string which will be used as context data in the transformation. If the string you pass cannot be parsed as JSON (using `JSON.parse()`), the script will terminate and return an error.
-- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in `'.*'` instead of `/.*/`). If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
 - -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
+- -x :if you pass the path to a valid javascript file that contains Handlebars custom helpers, those helpers will be loaded and made available to your transformations. See "Template Example: demo-simple-with-handlebars-helpers.hbs" for important details.
 
 ### transformJSON-file.js
 
@@ -47,9 +48,9 @@ The command line arguments are:
 
 - -t :the full path of the template file to use for the transformation. 
 - -i :the full path to a data file containing individual JSON objects, one per row. Note, a single JSON object (an array of JSON objects) is not supported.
-- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing JSON. To avoid an error, ensure that your Regex still results in valid JSON. Do not include the typical forward slashes used in javascript regex patterns (pass in `'.*'` instead of `/.*/`). If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
 - -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
-
+- -x :if you pass the path to a valid javascript file that contains Handlebars custom helpers, those helpers will be loaded and made available to your transformations. See "Template Example: demo-simple-with-handlebars-helpers.hbs" for important details.
 
 This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
 ```bash
@@ -102,6 +103,50 @@ What just happened? The template mustached variables were replaced with data com
 Of course, this is a very simple example, but in practice the data object can be any JSON structure even containing arrays, 
 nested objects, etc.
 
+### Template Example: demo-simple-with-handlebars-helpers.hbs
+
+In addition to standard Handlebars substitutions, the Handlebars API also supports custom helpers. This package exposes those as well to the CLI scripts and provides an easy mechanism for other code that uses this package directly to include custom handlebars helpers.  
+
+The example template is very simple:
+
+```
+{ "customerName": "{{yell customer.name}}" }
+```
+
+The string `yell` in the above example will call a Handlebar helper called `yell`.
+
+You can define Handlebars helpers in a special JavaScript file. For example:
+```javascript
+function loadHandlebarsHelpers(Handlebars) {
+  Handlebars.registerHelper('yell', (someString) => {
+    return someString.toUpperCase();
+  });
+}
+module.exports.loadHandlebarsHelpers = loadHandlebarsHelpers;
+```
+
+In the above, the blocks that start with `Handlebars.registerHelper(...)` are standard Handlebars custom helpers as described here: https://handlebarsjs.com/guide/#custom-helpers.
+
+However, to make these easy to use within this package, we wrap one or more such `registerHelper()` instructions in a special syntax like this:
+```javascript
+function loadHandlebarsHelpers(Handlebars) {
+  // As many Handlebars custom helper registrations as you want
+}
+module.exports.loadHandlebarsHelpers = loadHandlebarsHelpers;
+```
+
+The final step in order to use your custom helpers is to pass your helper's path in the transformJSON command line like using the `-x` command line argument:
+```bash
+$  node ./transformJSON-file.js -t "./template-examples/demo-simple-with-handlebars-helpers.hbs"  -i "./tests/test-files/simple-json-01.txt" -x template-examples/demo-handlebars-helpers.js > /path/to/an/output/file.json
+```
+
+When you run this **demo-simple.hbs** template with the data above, the results are that all the names are converted to UPPERCASE:
+```
+{ "customerName": "JOHN" }
+{ "customerName": "MARY" }
+{ "customerName": "PETE" }
+```
+
 ### Data File Example: simple-json-01.txt
 
 The example data file contains one JSON object per row as follows:
@@ -133,9 +178,9 @@ The command line arguments are:
 - -d :a character delimiter that is used in your input.
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names. Should not be used with the '-c' argument.
-- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -m :(optional) pass a regex match as a string. This will be applied to the -i string before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in `'.*'` instead of `/.*/`). If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
 - -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
-
+- -x :if you pass the path to a valid javascript file that contains Handlebars custom helpers, those helpers will be loaded and made available to your transformations. See "Template Example: demo-simple-with-handlebars-helpers.hbs" for important details.
 
 ### transformDelimited-file.js
 
@@ -154,8 +199,9 @@ The command line arguments are:
 - -d :a character delimiter that is used in your input.
 - -c :a string that represents the column names for your input. Do not quote the various column names individually. This should be a single string (and the string itself should be quoted.) This should not be used if the '-n' argument is also used.
 - -n :a flag to tell the script to infer column names from the first row of your file. Should not be used with the '-c' argument.
-- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in '.*' instead of /.*/.) If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
+- -m :(optional) pass a regex match as a string. This will be applied to each line in the input file before parsing columns. To avoid an error, ensure that your Regex still results in the proper number of columns. Do not include the typical forward slashes used in javascript regex patterns (pass in `'.*'` instead of `/.\*/`). If passed, you must also pass -r --replacepattern containing a matching Regex replacement string.
 - -r :if you passed in -m, pass a regex replacement pattern in this argument. This is ignored if you don't also pass -m.
+- -x :if you pass the path to a valid javascript file that contains Handlebars custom helpers, those helpers will be loaded and made available to your transformations. See "Template Example: demo-simple-with-handlebars-helpers.hbs" for important details.
 
 This script outputs all transformed rows to STDOUT. OS level redirection should be used capture results to file. For example:
 ```bash
@@ -258,7 +304,7 @@ Considerations:
 - If you are doing an XSV transform, ensure your Regex replacement results in the proper number of columns and string quotes.
 
 **Example 1 - Simple**
-- Passing: -m 'John' -r 'Johnnn'
+- Passing: `-m 'John' -r 'Johnnn'`
   When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
   
   ```json
@@ -272,7 +318,7 @@ Considerations:
   ```
 
 **Example 2 - Complex**
-- Passing: -m '"rv(\d\d)".*?:' -r '"rv":$1,"rvdata":'
+- Passing: `-m '"rv(\d\d)".*?:' -r '"rv":$1,"rvdata":'`
   When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
   
   ```json
@@ -299,7 +345,7 @@ Considerations:
   ```
   
 **Example 3 - Simple**
-- Passing: -m 'John' -r 'Johnnn'
+- Passing: `-m 'John' -r 'Johnnn'`
   When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
   
   ```csv
@@ -313,7 +359,7 @@ Considerations:
   ```
 
 **Example 4 - Complex**
-- Passing: -m '^(.*?),(.*?),(.*?),(.*?)$' -r '$1,$2,$3,$4,"full time"' 
+- Passing: `-m '^(.*?),(.*?),(.*?),(.*?)$' -r '$1,$2,$3,$4,"full time"'`
   When receiving the following input: (pretty printed for illustration only. Note matches should be on the same line of the file since the Regex will be applied one line at a time!)
   
   ```csv
