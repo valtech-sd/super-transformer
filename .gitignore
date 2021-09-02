@@ -10,3 +10,6 @@
 
 # Editor-based Rest Client
 .idea/httpRequests
+
+# Ignore node modules
+node_modules/
