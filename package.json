@@ -4,6 +4,7 @@
   "description": "This package provides scripts to transform incoming strings and files using templates. It receives a file path or a string in various formats (JSON, CSV) and returns transformed data.",
   "author": "Eric Soto <eric.soto@valtech.com>",
   "main": "index.js",
+  "typings": "index.d.ts",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/valtech-sd/super-transformer/issues"
